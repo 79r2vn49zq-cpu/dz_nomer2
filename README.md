@@ -48,3 +48,5 @@ python3 main.py \
   --repo <url_или_файл> \
   --test-mode <true/false> \
   --max-depth <число>
+
+python3 main.py --package A --repo ./test_graph.txt --test-mode true --max-depth 5
