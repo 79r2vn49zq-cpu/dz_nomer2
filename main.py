@@ -7,9 +7,9 @@ from urllib.parse import urlparse
 import re
 
 
-# ============================
+
 # VALIDATION (Этап 1)
-# ============================
+
 
 def validate_package(name: str):
     if not name or not name.strip():
@@ -46,9 +46,9 @@ def validate_depth(v: str):
     return d
 
 
-# ============================
+
 # ЭТАП 2 — получение Packages.gz
-# ============================
+
 
 def download_packages(repo_url: str):
     url = repo_url.rstrip("/") + "/dists/jammy/main/binary-amd64/Packages.gz"
@@ -76,9 +76,9 @@ def extract_dependencies(package: str, packages_text: str):
     sys.exit(1)
 
 
-# ============================
+
 # ЭТАП 3 — граф + DFS без рекурсии
-# ============================
+
 
 def load_test_graph(path: str):
     """
@@ -154,9 +154,9 @@ def build_graph(start_pkg: str, repo: str, test_mode: bool, max_depth: int):
     return result_graph
 
 
-# ============================
+
 # ЭТАП 4 — порядок загрузки зависимостей (топосорт)
-# ============================
+
 
 def compute_load_order(graph: dict, start: str):
     visited = set()
@@ -193,9 +193,9 @@ def compute_load_order(graph: dict, start: str):
     return list(reversed(order))
 
 
-# ============================
+
 # ЭТАП 5 — визуализация в Mermaid
-# ============================
+
 
 def _make_mermaid_id(name: str) -> str:
     """
@@ -251,9 +251,9 @@ def graph_to_mermaid(graph: dict, root: str) -> str:
     return "\n".join(lines)
 
 
-# ============================
+
 # MAIN
-# ============================
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -264,7 +264,7 @@ def main():
 
     args = parser.parse_args()
 
-    # ==== Этап 1: валидация ====
+    # Этап 1: валидация 
     try:
         package = validate_package(args.package)
         repo = validate_repo(args.repo)
@@ -281,7 +281,7 @@ def main():
     print(f"max_depth = {depth}")
     print()
 
-    # ==== Этап 3: граф зависимостей ====
+    # Этап 3: граф зависимостей 
     print("=== Этап 3: построение графа зависимостей ===\n")
     graph = build_graph(package, repo, test_mode, depth)
 
@@ -289,7 +289,7 @@ def main():
     for pkg, deps in graph.items():
         print(f"{pkg}: {', '.join(deps) if deps else '(нет)'}")
 
-    # ==== Этап 4: порядок загрузки ====
+    # Этап 4: порядок загрузки 
     print("\n=== Этап 4: Порядок загрузки зависимостей ===")
     load_order = compute_load_order(graph, package)
 
@@ -300,7 +300,7 @@ def main():
         for p in load_order:
             print(" →", p)
 
-    # ==== Этап 5: Mermaid ====
+    # Этап 5: Mermaid 
     print("\n=== Этап 5: Mermaid-описание графа ===")
     mermaid = graph_to_mermaid(graph, package)
     print(mermaid)
